@@ -486,8 +486,8 @@ namespace SpaceShoot
         private void pictureBoxButton_Click(object sender, EventArgs e)
         {
             MessageBox.Show("You're going to Docking Station...");
-            Form2 mainForm = new Form2(); 
-            mainForm.Show(); 
+            Station st = new Station(); 
+            st.Show(); 
             this.Close();
         }
     }
