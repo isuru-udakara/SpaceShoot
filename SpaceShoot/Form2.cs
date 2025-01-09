@@ -43,8 +43,8 @@ namespace SpaceShoot
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            Station st = new Station(); 
-            st.Show(); 
+            Station st = new Station();
+            st.Show();
             this.Hide();
         }
 
@@ -52,6 +52,13 @@ namespace SpaceShoot
         {
             Station st = new Station();
             st.Show();
+            this.Hide();
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            info inf = new info();
+            inf.Show();
             this.Hide();
         }
     }
