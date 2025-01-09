@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
 
 namespace SpaceShoot
 {
@@ -15,6 +16,7 @@ namespace SpaceShoot
         public Form3()
         {
             InitializeComponent();
+            LoadDataFromDatabase();
         }
 
         private void InitializeComponent()
@@ -122,6 +124,7 @@ namespace SpaceShoot
             button3.TabIndex = 8;
             button3.Text = "Reset";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // label4
             // 
@@ -231,6 +234,45 @@ namespace SpaceShoot
         private void Form3_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void LoadDataFromDatabase()
+        {
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount FROM [Table]";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open(); SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    labelScore.Text = reader["TotalScore"].ToString();
+                    labelLevel.Text = reader["MaxLevel"].ToString();
+                    labelTime.Text = (Convert.ToInt32(reader["TotalTimeSpent"]) / 60).ToString() + " mins";
+                    // Converting seconds to minutes
+                    label5.Text = reader["PlayedCount"].ToString();
+                }
+                reader.Close();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True"; 
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "DELETE FROM [Table]";
+                SqlCommand command = new SqlCommand(query, connection); 
+                connection.Open(); 
+                command.ExecuteNonQuery(); 
+                connection.Close();
+                labelScore.Text = "0"; 
+                labelLevel.Text = "0"; 
+                labelTime.Text = "0 mins"; 
+                label5.Text = "0";
+
+                MessageBox.Show("Your data has been cleared!", "Reset Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }
