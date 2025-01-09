@@ -238,23 +238,27 @@ namespace SpaceShoot
 
         private void LoadDataFromDatabase()
         {
-            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
+            string connectionString = "your_connection_string_here";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount FROM [Table]";
+                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount FROM YourTableName";
                 SqlCommand command = new SqlCommand(query, connection);
-                connection.Open(); SqlDataReader reader = command.ExecuteReader();
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    labelScore.Text = reader["TotalScore"].ToString();
-                    labelLevel.Text = reader["MaxLevel"].ToString();
-                    labelTime.Text = (Convert.ToInt32(reader["TotalTimeSpent"]) / 60).ToString() + " mins";
-                    // Converting seconds to minutes
-                    label5.Text = reader["PlayedCount"].ToString();
+                    labelScore.Text = reader["TotalScore"] != DBNull.Value ? reader["TotalScore"].ToString() : "0";
+                    labelLevel.Text = reader["MaxLevel"] != DBNull.Value ? reader["MaxLevel"].ToString() : "0";
+                    labelTime.Text = reader["TotalTimeSpent"] != DBNull.Value
+                        ? (Convert.ToInt32(reader["TotalTimeSpent"]) / 60).ToString() + " mins"
+                        : "0 mins";
+                    label5.Text = reader["PlayedCount"] != DBNull.Value ? reader["PlayedCount"].ToString() : "0";
                 }
                 reader.Close();
             }
         }
+
 
         private void button3_Click(object sender, EventArgs e)
         {
