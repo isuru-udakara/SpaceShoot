@@ -238,10 +238,10 @@ namespace SpaceShoot
 
         private void LoadDataFromDatabase()
         {
-            string connectionString = "your_connection_string_here";
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount FROM YourTableName";
+                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount FROM [Table]";
                 SqlCommand command = new SqlCommand(query, connection);
 
                 connection.Open();
