@@ -8,6 +8,7 @@ using global::System.Threading;
 using global::System.Threading.Tasks;
 using global::System.Windows.Forms;
 using global::WMPLib;
+using Microsoft.Data.SqlClient;
 
 namespace SpaceShoot
 {
@@ -37,6 +38,10 @@ namespace SpaceShoot
         WindowsMediaPlayer shootgMedia;
         WindowsMediaPlayer pexplotion;
         WindowsMediaPlayer enexplotion;
+
+        private string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
+        private int sessionId;
+
         public Form1()
         {
             InitializeComponent();
@@ -59,6 +64,8 @@ namespace SpaceShoot
             difficulty = 9;
 
             StartTimers();
+
+            StartGameSession();
 
             munitionSpeed = 25;
             munitions = new PictureBox[3];
@@ -379,6 +386,7 @@ namespace SpaceShoot
 
             gameMedia.controls.stop();
             StopTimers();
+            EndGameSession(score, level);
         }
 
         private void StopTimers()
@@ -485,10 +493,51 @@ namespace SpaceShoot
 
         private void pictureBoxButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("You're going to Docking Station...");
-            Station st = new Station(); 
-            st.Show(); 
-            this.Close();
+            if (gameIsOver || pause) 
+            { 
+                EndGameSession(score, level); 
+                Station st = new Station();
+                st.Show(); 
+                this.Close(); 
+            }
         }
+
+
+        private void StartGameSession()
+        {
+            DateTime startTime = DateTime.Now;
+            DateTime date = DateTime.Now.Date;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO [Table] (start_time, date) OUTPUT INSERTED.session VALUES (@StartTime, @Date)";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@StartTime", startTime);
+                command.Parameters.AddWithValue("@Date", date);
+
+                connection.Open();
+                sessionId = (int)command.ExecuteScalar();
+            }
+        }
+
+        private void EndGameSession(int score, int level)
+        {
+            DateTime endTime = DateTime.Now;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE [Table] SET end_time = @EndTime, score = @Score, level = @Level WHERE session = @SessionID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@EndTime", endTime);
+                command.Parameters.AddWithValue("@Score", score);
+                command.Parameters.AddWithValue("@Level", level);
+                command.Parameters.AddWithValue("@SessionID", sessionId);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+
     }
 }
