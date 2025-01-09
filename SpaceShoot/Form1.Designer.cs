@@ -59,7 +59,7 @@
             // 
             player.BackColor = Color.Transparent;
             player.Image = (Image)resources.GetObject("player.Image");
-            player.Location = new Point(447, 698);
+            player.Location = new Point(458, 698);
             player.Name = "player";
             player.Size = new Size(108, 90);
             player.SizeMode = PictureBoxSizeMode.Zoom;
@@ -105,7 +105,7 @@
             // 
             // ReplayBtn
             // 
-            ReplayBtn.Location = new Point(280, 436);
+            ReplayBtn.Location = new Point(291, 436);
             ReplayBtn.Name = "ReplayBtn";
             ReplayBtn.Size = new Size(460, 84);
             ReplayBtn.TabIndex = 1;
@@ -116,7 +116,7 @@
             // 
             // ExitBtn
             // 
-            ExitBtn.Location = new Point(280, 570);
+            ExitBtn.Location = new Point(291, 570);
             ExitBtn.Name = "ExitBtn";
             ExitBtn.Size = new Size(460, 83);
             ExitBtn.TabIndex = 2;
@@ -131,7 +131,7 @@
             label.BackColor = Color.Transparent;
             label.Font = new Font("Consolas", 48F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label.ForeColor = Color.Red;
-            label.Location = new Point(293, 270);
+            label.Location = new Point(304, 270);
             label.Name = "label";
             label.Size = new Size(436, 94);
             label.TabIndex = 3;
@@ -168,7 +168,7 @@
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Consolas", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.Yellow;
-            label3.Location = new Point(872, 29);
+            label3.Location = new Point(895, 29);
             label3.Name = "label3";
             label3.Size = new Size(120, 33);
             label3.TabIndex = 6;
@@ -180,7 +180,7 @@
             levelLbl.BackColor = Color.Transparent;
             levelLbl.Font = new Font("Consolas", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             levelLbl.ForeColor = Color.Yellow;
-            levelLbl.Location = new Point(975, 29);
+            levelLbl.Location = new Point(998, 29);
             levelLbl.Name = "levelLbl";
             levelLbl.Size = new Size(45, 33);
             levelLbl.TabIndex = 7;
@@ -192,7 +192,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Navy;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1032, 853);
+            ClientSize = new Size(1096, 853);
             Controls.Add(levelLbl);
             Controls.Add(label3);
             Controls.Add(scoreLbl);
@@ -201,9 +201,10 @@
             Controls.Add(ExitBtn);
             Controls.Add(ReplayBtn);
             Controls.Add(player);
+            FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
-            MaximumSize = new Size(1050, 900);
+            MaximumSize = new Size(1100, 900);
             MinimizeBox = false;
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
