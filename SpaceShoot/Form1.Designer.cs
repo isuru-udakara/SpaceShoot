@@ -46,7 +46,9 @@
             scoreLbl = new Label();
             label3 = new Label();
             levelLbl = new Label();
+            pictureBoxButton = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)player).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxButton).BeginInit();
             SuspendLayout();
             // 
             // MoveBgTimer
@@ -186,6 +188,21 @@
             levelLbl.TabIndex = 7;
             levelLbl.Text = "01";
             // 
+            // pictureBoxButton
+            // 
+            pictureBoxButton.BackColor = Color.LightGray;
+            pictureBoxButton.BorderStyle = BorderStyle.FixedSingle;
+            pictureBoxButton.Cursor = Cursors.Hand;
+            pictureBoxButton.Image = (Image)resources.GetObject("pictureBoxButton.Image");
+            pictureBoxButton.Location = new Point(402, 292);
+            pictureBoxButton.Name = "pictureBoxButton";
+            pictureBoxButton.Size = new Size(314, 240);
+            pictureBoxButton.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBoxButton.TabIndex = 8;
+            pictureBoxButton.TabStop = false;
+            pictureBoxButton.Visible = false;
+            pictureBoxButton.Click += pictureBoxButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -193,6 +210,7 @@
             BackColor = Color.Navy;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1096, 853);
+            Controls.Add(pictureBoxButton);
             Controls.Add(levelLbl);
             Controls.Add(label3);
             Controls.Add(scoreLbl);
@@ -213,6 +231,7 @@
             KeyDown += Form1_KeyDown;
             KeyUp += Form1_KeyUp;
             ((System.ComponentModel.ISupportInitialize)player).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxButton).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -235,5 +254,6 @@
         private Label scoreLbl;
         private Label label3;
         private Label levelLbl;
+        private PictureBox pictureBoxButton;
     }
 }

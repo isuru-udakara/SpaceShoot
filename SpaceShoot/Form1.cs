@@ -30,7 +30,7 @@ namespace SpaceShoot
         int score;
         int level;
         int difficulty;
-        bool pause= false;
+        bool pause = false;
         bool gameIsOver;
 
         WindowsMediaPlayer gameMedia;
@@ -239,36 +239,73 @@ namespace SpaceShoot
             }
         }
 
-        private void Form1_KeyUp(object sender, KeyEventArgs e) 
-        { 
-            RightMoveTimer.Stop(); 
-            LeftMoveTimer.Stop(); 
-            DownMoveTimer.Stop(); 
-            UpMoveTimer.Stop(); 
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            RightMoveTimer.Stop();
+            LeftMoveTimer.Stop();
+            DownMoveTimer.Stop();
+            UpMoveTimer.Stop();
 
-            if (e.KeyCode == Keys.Space) 
-            { 
-                if (!gameIsOver) 
-                { 
-                    if (pause) 
-                    { 
-                        StartTimers(); 
-                        label.Visible = false; 
-                        gameMedia.controls.play(); 
-                        pause = false; 
-                    } 
-                    else 
-                    { 
-                        label.Location = new Point(this.Width / 2 - 120, 150); 
-                        label.Text = "PAUSED"; 
-                        label.Visible = true; 
-                        gameMedia.controls.pause(); 
-                        StopTimers(); 
-                        pause = true; 
-                    } 
-                } 
-            } 
+            if (e.KeyCode == Keys.Space)
+            {
+                if (!gameIsOver)
+                {
+                    if (pause)
+                    {
+                        StartTimers();
+                        label.Visible = false;
+                        gameMedia.controls.play();
+                        pause = false;
+                        ResumeGame();
+                    }
+                    else
+                    {
+                        label.Location = new Point(this.Width / 2 - 120, 150);
+                        label.Text = "PAUSED";
+                        label.Visible = true;
+                        gameMedia.controls.pause();
+                        StopTimers();
+                        PauseGame();
+                        pause = true;
+                    }
+                }
+            }
         }
+
+        private void PauseGame()
+        {
+            // Stop all game timers or game loops
+            RightMoveTimer.Stop();
+            LeftMoveTimer.Stop();
+            DownMoveTimer.Stop();
+            UpMoveTimer.Stop();
+            gameMedia.controls.pause();
+
+            // Show the paused label and stop PictureBox button
+            label.Location = new Point(this.Width / 2 - 120, 150);
+            label.Text = "PAUSED";
+            label.Visible = true;
+            pictureBoxButton.Visible = true; // Show the PictureBox button when pausing
+
+            pause = true;
+        }
+
+        private void ResumeGame()
+        {
+            // Start all game timers or game loops
+            RightMoveTimer.Start();
+            LeftMoveTimer.Start();
+            DownMoveTimer.Start();
+            UpMoveTimer.Start();
+            gameMedia.controls.play();
+
+            // Hide the paused label and stop PictureBox button
+            label.Visible = false;
+            pictureBoxButton.Visible = false; // Hide the PictureBox button when resuming
+
+            pause = false;
+        }
+
 
         private void MoveMunitionTimer_Tick(object sender, EventArgs e)
         {
@@ -350,9 +387,9 @@ namespace SpaceShoot
             MoveEnemiesTimer.Stop();
             MoveMunitionTimer.Stop();
             EnemiesMunitionTimer.Stop();
-            RightMoveTimer.Stop(); 
-            LeftMoveTimer.Stop(); 
-            DownMoveTimer.Stop(); 
+            RightMoveTimer.Stop();
+            LeftMoveTimer.Stop();
+            DownMoveTimer.Stop();
             UpMoveTimer.Stop();
         }
 
@@ -362,8 +399,8 @@ namespace SpaceShoot
             MoveEnemiesTimer.Start();
             MoveMunitionTimer.Start();
             EnemiesMunitionTimer.Start();
-            RightMoveTimer.Start(); 
-            LeftMoveTimer.Start(); 
+            RightMoveTimer.Start();
+            LeftMoveTimer.Start();
             DownMoveTimer.Start();
             UpMoveTimer.Start();
         }
@@ -446,5 +483,12 @@ namespace SpaceShoot
             StartTimers();
         }
 
+        private void pictureBoxButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("You're going to Docking Station...");
+            Form2 mainForm = new Form2(); 
+            mainForm.Show(); 
+            this.Close();
+        }
     }
 }
