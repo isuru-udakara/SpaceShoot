@@ -93,6 +93,7 @@
             // 
             // pictureBox5
             // 
+            pictureBox5.Cursor = Cursors.Hand;
             pictureBox5.Image = (Image)resources.GetObject("pictureBox5.Image");
             pictureBox5.Location = new Point(974, 427);
             pictureBox5.Name = "pictureBox5";
