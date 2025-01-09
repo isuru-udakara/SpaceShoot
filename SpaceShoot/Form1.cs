@@ -45,6 +45,7 @@ namespace SpaceShoot
         public Form1()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.KeyUp += new KeyEventHandler(Form1_KeyUp);
             this.Load += new EventHandler(Form1_Load);
             ResetGame();

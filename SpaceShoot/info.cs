@@ -15,6 +15,7 @@ namespace SpaceShoot
         public info()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

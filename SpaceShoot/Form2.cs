@@ -15,6 +15,7 @@ namespace SpaceShoot
         public Form2()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void buttonPlay_Click(object sender, EventArgs e)

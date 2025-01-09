@@ -16,6 +16,7 @@ namespace SpaceShoot
         public Form3()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
             LoadDataFromDatabase();
         }
 
@@ -37,6 +38,8 @@ namespace SpaceShoot
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
             labelDateTime = new Label();
+            labelShowSession = new Label();
+            labelSession = new Label();
             ((ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -205,11 +208,37 @@ namespace SpaceShoot
             labelDateTime.TabIndex = 12;
             labelDateTime.Text = "0:0";
             // 
+            // labelShowSession
+            // 
+            labelShowSession.AutoSize = true;
+            labelShowSession.BackColor = Color.Transparent;
+            labelShowSession.Font = new Font("Bruce Forever", 12F);
+            labelShowSession.ForeColor = Color.DarkMagenta;
+            labelShowSession.Location = new Point(870, 305);
+            labelShowSession.Name = "labelShowSession";
+            labelShowSession.Size = new Size(33, 25);
+            labelShowSession.TabIndex = 14;
+            labelShowSession.Text = "0";
+            // 
+            // labelSession
+            // 
+            labelSession.AutoSize = true;
+            labelSession.BackColor = Color.Transparent;
+            labelSession.Font = new Font("Bruce Forever", 12F);
+            labelSession.ForeColor = Color.DarkMagenta;
+            labelSession.Location = new Point(589, 305);
+            labelSession.Name = "labelSession";
+            labelSession.Size = new Size(220, 25);
+            labelSession.TabIndex = 13;
+            labelSession.Text = "Your Session: ";
+            // 
             // Form3
             // 
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(1002, 535);
             ControlBox = false;
+            Controls.Add(labelShowSession);
+            Controls.Add(labelSession);
             Controls.Add(labelDateTime);
             Controls.Add(pictureBox1);
             Controls.Add(label5);
@@ -248,6 +277,8 @@ namespace SpaceShoot
         private System.Windows.Forms.Timer timer1;
         private IContainer components;
         private Label labelDateTime;
+        private Label labelShowSession;
+        private Label labelSession;
         private Button button3;
 
         private void button2_Click(object sender, EventArgs e)
@@ -280,7 +311,7 @@ namespace SpaceShoot
             string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount FROM [Table]";
+                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) - 1 as PlayedCount, MAX(session) as MaxSession FROM [Table]";
                 SqlCommand command = new SqlCommand(query, connection);
 
                 connection.Open();
@@ -293,6 +324,7 @@ namespace SpaceShoot
                         ? (Convert.ToInt32(reader["TotalTimeSpent"]) / 60).ToString() + " mins"
                         : "0 mins";
                     label5.Text = reader["PlayedCount"] != DBNull.Value ? reader["PlayedCount"].ToString() : "0";
+                    labelShowSession.Text = reader["MaxSession"] != DBNull.Value ? reader["MaxSession"].ToString() : "0";
                 }
                 reader.Close();
             }
@@ -306,13 +338,19 @@ namespace SpaceShoot
             {
                 string query = "DELETE FROM [Table]";
                 SqlCommand command = new SqlCommand(query, connection);
+
+                string resetIdentityQuery = "DBCC CHECKIDENT ([Table], RESEED, 0)"; 
+                SqlCommand resetIdentityCommand = new SqlCommand(resetIdentityQuery, connection);
+
                 connection.Open();
                 command.ExecuteNonQuery();
+                resetIdentityCommand.ExecuteNonQuery();
                 connection.Close();
                 labelScore.Text = "0";
                 labelLevel.Text = "0";
                 labelTime.Text = "0 mins";
                 label5.Text = "0";
+                labelShowSession.Text = "0";
 
                 MessageBox.Show("Your data has been cleared!", "Reset Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
