@@ -41,6 +41,7 @@ namespace SpaceShoot
 
         private string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
         private int sessionId;
+        private DateTime startTime;
 
         public Form1()
         {
@@ -48,10 +49,16 @@ namespace SpaceShoot
             this.StartPosition = FormStartPosition.CenterScreen;
             this.KeyUp += new KeyEventHandler(Form1_KeyUp);
             this.Load += new EventHandler(Form1_Load);
+            this.Shown += new EventHandler(Form1_Shown);
             ResetGame();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form1_Shown(object sender, EventArgs e)
+        { 
+          startTime = DateTime.Now; 
+        }
+
+            private void Form1_Load(object sender, EventArgs e)
         {
             backgroundSpeed = 4;
             playerSpeed = 4;
@@ -65,8 +72,6 @@ namespace SpaceShoot
             difficulty = 9;
 
             StartTimers();
-
-            SaveGameSession(false);
 
             munitionSpeed = 25;
             munitions = new PictureBox[3];
@@ -388,7 +393,8 @@ namespace SpaceShoot
             gameMedia.controls.stop();
             StopTimers();
 
-            SaveGameSession(true, score, level); // Save the game session data
+            SaveGameSession(score, level); // Save the game session data
+            //MessageBox.Show("Game Over! Your session data has been saved.", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
 
@@ -494,89 +500,112 @@ namespace SpaceShoot
             StartTimers();
         }
 
+        private void SaveGameSession(int score, int level)
+        {
+            DateTime endTime = DateTime.Now;
+            DateTime date = DateTime.Now.Date;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Insert a new session with all data when the game ends
+                string query = "INSERT INTO [Table] (start_time, end_time, score, level, date) VALUES (@StartTime, @EndTime, @Score, @Level, @Date)";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@StartTime", startTime); // Use the captured start time
+                command.Parameters.AddWithValue("@EndTime", endTime); // Use the current time as the end time
+                command.Parameters.AddWithValue("@Score", score);
+                command.Parameters.AddWithValue("@Level", level);
+                command.Parameters.AddWithValue("@Date", date);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+
         private void pictureBoxButton_Click(object sender, EventArgs e)
         {
             if (gameIsOver || pause)
             {
-                SaveGameSession(true, score, level);
+                SaveGameSession(score, level);
                 Station st = new Station();
                 st.Show();
                 this.Close();
             }
         }
 
-
-        private void SaveGameSession(bool isGameOver, int? score = null, int? level = null)
-        {
-            DateTime currentTime = DateTime.Now;
-            DateTime date = DateTime.Now.Date;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                if (!isGameOver)
-                {
-                    // Insert a new session when the game starts
-                    string insertQuery = "INSERT INTO [Table] (start_time, date) OUTPUT INSERTED.session VALUES (@StartTime, @Date)";
-                    SqlCommand insertCommand = new SqlCommand(insertQuery, connection);
-                    insertCommand.Parameters.AddWithValue("@StartTime", currentTime);
-                    insertCommand.Parameters.AddWithValue("@Date", date);
-
-                    connection.Open();
-                    sessionId = (int)insertCommand.ExecuteScalar();
-                    connection.Close();
-                }
-                else
-                {
-                    // Update the session when the game ends
-                    string updateQuery = "UPDATE [Table] SET end_time = @EndTime, score = @Score, level = @Level WHERE session = @SessionID";
-                    SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
-                    updateCommand.Parameters.AddWithValue("@EndTime", currentTime);
-                    updateCommand.Parameters.AddWithValue("@Score", score);
-                    updateCommand.Parameters.AddWithValue("@Level", level);
-                    updateCommand.Parameters.AddWithValue("@SessionID", sessionId);
-
-                    connection.Open();
-                    updateCommand.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
-        }
-
-
-
-        //private void StartGameSession()
+        //private void SaveGameSession(bool isGameOver, int? score = null, int? level = null)
         //{
-        //    DateTime startTime = DateTime.Now;
+        //    DateTime currentTime = DateTime.Now;
         //    DateTime date = DateTime.Now.Date;
 
         //    using (SqlConnection connection = new SqlConnection(connectionString))
         //    {
-        //        string query = "INSERT INTO [Table] (start_time, date) OUTPUT INSERTED.session VALUES (@StartTime, @Date)";
-        //        SqlCommand command = new SqlCommand(query, connection);
-        //        command.Parameters.AddWithValue("@StartTime", startTime);
-        //        command.Parameters.AddWithValue("@Date", date);
+        //        if (!isGameOver)
+        //        {
+        //            // Insert a new session when the game starts
+        //            string insertQuery = "INSERT INTO [Table] (start_time, date) OUTPUT INSERTED.session VALUES (@StartTime, @Date)";
+        //            SqlCommand insertCommand = new SqlCommand(insertQuery, connection);
+        //            insertCommand.Parameters.AddWithValue("@StartTime", currentTime);
+        //            insertCommand.Parameters.AddWithValue("@Date", date);
 
-        //        connection.Open();
-        //        sessionId = (int)command.ExecuteScalar();
+        //            connection.Open();
+        //            sessionId = (int)insertCommand.ExecuteScalar(); // Initialize sessionId
+        //            connection.Close();
+        //        }
+        //        else
+        //        {
+        //            // Update the session when the game ends
+        //            string updateQuery = "UPDATE [Table] SET end_time = @EndTime, score = @Score, level = @Level WHERE session = @SessionID";
+        //            SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
+        //            updateCommand.Parameters.AddWithValue("@EndTime", currentTime);
+        //            updateCommand.Parameters.AddWithValue("@Score", score);
+        //            updateCommand.Parameters.AddWithValue("@Level", level);
+        //            updateCommand.Parameters.AddWithValue("@SessionID", sessionId); // Use sessionId to update the correct row
+
+        //            connection.Open();
+        //            updateCommand.ExecuteNonQuery();
+        //            connection.Close();
+        //        }
         //    }
         //}
 
-        //private void EndGameSession(int score, int level)
-        //{
-        //    DateTime endTime = DateTime.Now;
-
-        //    using (SqlConnection connection = new SqlConnection(connectionString))
-        //    {
-        //        string query = "UPDATE [Table] SET end_time = @EndTime, score = @Score, level = @Level WHERE session = @SessionID";
-        //        SqlCommand command = new SqlCommand(query, connection);
-        //        command.Parameters.AddWithValue("@EndTime", endTime);
-        //        command.Parameters.AddWithValue("@Score", score);
-        //        command.Parameters.AddWithValue("@Level", level);
-        //        command.Parameters.AddWithValue("@SessionID", sessionId);
-
-        //        connection.Open();
-        //        command.ExecuteNonQuery();
-        //    }
-        //}
     }
+
+
+
+    //private void StartGameSession()
+    //{
+    //    DateTime startTime = DateTime.Now;
+    //    DateTime date = DateTime.Now.Date;
+
+    //    using (SqlConnection connection = new SqlConnection(connectionString))
+    //    {
+    //        string query = "INSERT INTO [Table] (start_time, date) OUTPUT INSERTED.session VALUES (@StartTime, @Date)";
+    //        SqlCommand command = new SqlCommand(query, connection);
+    //        command.Parameters.AddWithValue("@StartTime", startTime);
+    //        command.Parameters.AddWithValue("@Date", date);
+
+    //        connection.Open();
+    //        sessionId = (int)command.ExecuteScalar();
+    //    }
+    //}
+
+    //private void EndGameSession(int score, int level)
+    //{
+    //    DateTime endTime = DateTime.Now;
+
+    //    using (SqlConnection connection = new SqlConnection(connectionString))
+    //    {
+    //        string query = "UPDATE [Table] SET end_time = @EndTime, score = @Score, level = @Level WHERE session = @SessionID";
+    //        SqlCommand command = new SqlCommand(query, connection);
+    //        command.Parameters.AddWithValue("@EndTime", endTime);
+    //        command.Parameters.AddWithValue("@Score", score);
+    //        command.Parameters.AddWithValue("@Level", level);
+    //        command.Parameters.AddWithValue("@SessionID", sessionId);
+
+    //        connection.Open();
+    //        command.ExecuteNonQuery();
+    //    }
+    //}
 }

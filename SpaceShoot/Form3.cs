@@ -311,7 +311,7 @@ namespace SpaceShoot
             string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount, MAX(session) as MaxSession FROM [Table]";
+                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, ISNULL(end_time, GETDATE()))) as TotalTimeSpent, COUNT(*) as PlayedCount, MAX(session) as MaxSession FROM [Table]";
                 SqlCommand command = new SqlCommand(query, connection);
 
                 connection.Open();
@@ -321,14 +321,15 @@ namespace SpaceShoot
                     labelScore.Text = reader["TotalScore"] != DBNull.Value ? reader["TotalScore"].ToString() : "0";
                     labelLevel.Text = reader["MaxLevel"] != DBNull.Value ? reader["MaxLevel"].ToString() : "0";
                     labelTime.Text = reader["TotalTimeSpent"] != DBNull.Value
-                        ? (Convert.ToInt32(reader["TotalTimeSpent"]) / 60).ToString() + " mins"
-                        : "0 mins";
+                        ? (Convert.ToInt32(reader["TotalTimeSpent"])).ToString() + " sec"
+                        : "0 sec";
                     label5.Text = reader["PlayedCount"] != DBNull.Value ? reader["PlayedCount"].ToString() : "0";
                     labelShowSession.Text = reader["MaxSession"] != DBNull.Value ? reader["MaxSession"].ToString() : "0";
                 }
                 reader.Close();
             }
         }
+
 
 
         private void button3_Click(object sender, EventArgs e)
