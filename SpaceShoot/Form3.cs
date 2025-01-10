@@ -311,7 +311,7 @@ namespace SpaceShoot
             string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\User\\Desktop\\Works\\CSharp\\SpaceShoot\\SpaceShoot\\SpaceShoot\\DataDB.mdf;Integrated Security=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) - 1 as PlayedCount, MAX(session) as MaxSession FROM [Table]";
+                string query = "SELECT SUM(score) as TotalScore, MAX(level) as MaxLevel, SUM(DATEDIFF(SECOND, start_time, end_time)) as TotalTimeSpent, COUNT(*) as PlayedCount, MAX(session) as MaxSession FROM [Table]";
                 SqlCommand command = new SqlCommand(query, connection);
 
                 connection.Open();
